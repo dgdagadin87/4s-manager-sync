@@ -1,8 +1,8 @@
 *.pyc
 *~
 __pycache__
-booksenv
-booksapp/migrations
+syncenv
+syncapp/migrations
 .idea
 .DS_Store
 nbproject/
