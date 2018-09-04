@@ -1,0 +1,8 @@
+*.pyc
+*~
+__pycache__
+booksenv
+booksapp/migrations
+.idea
+.DS_Store
+nbproject/
