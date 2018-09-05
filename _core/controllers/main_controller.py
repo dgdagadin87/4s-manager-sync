@@ -1,7 +1,5 @@
 from aiohttp import web
-
 import aiohttp_jinja2
-from ..config.settings import VIEWS_DIR
 
 
 class MainController(web.View):
