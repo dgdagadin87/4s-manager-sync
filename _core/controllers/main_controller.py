@@ -1,12 +1,10 @@
 from aiohttp import web
 
+import aiohttp_jinja2
 from ..config.settings import VIEWS_DIR
 
 
-async def main_controller(request):
-
-    with open(VIEWS_DIR + '/main.html', 'rb') as file:
-        return web.Response(
-            body=file.read().decode('utf8'),
-            content_type='text/html'
-        )
+class MainController(web.View):
+    @aiohttp_jinja2.template('main.html')
+    async def get(self):
+        return {}
