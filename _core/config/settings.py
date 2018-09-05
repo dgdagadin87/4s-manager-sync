@@ -1,2 +1,7 @@
 SERVER_HOST = '0.0.0.0'
 SERVER_PORT = 1234
+
+DATABASE_HOST = 'database_host'
+DATABASE_PORT = 777
+DATABASE_NAME = 'database'
+DATABASE_USER = 'user'

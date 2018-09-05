@@ -1,7 +1,7 @@
 from aiohttp import web
 import aiohttp_jinja2
 import jinja2
-
+from motor import motor_asyncio as ma
 
 from _core.config import settings
 from _core.controllers.main_controller import MainController
@@ -22,6 +22,9 @@ application.router.add_route('GET', '/ws', WebSocketController)
 application['static_root_url'] = '/static'
 application.router.add_static('/static', 'static', name='static')
 
+# db connect
+application.client = ma.AsyncIOMotorClient(MONGO_HOST)
+application.db = app.client[MONGO_DB_NAME]
 
 application.on_cleanup.append(on_shutdown)
 application['websockets'] = []
