@@ -5,9 +5,20 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <meta content="ie=edge" http-equiv="x-ua-compatible">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="{{ static('css/style.css') }}" rel="stylesheet">
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
         <script src="{{ static('js/main.js') }}"></script>
     </head>
     <body id="main-body">
-        Some main body
+        <div id='subscribe'>
+            {% for mes in messages %}
+            <p>{{ mes['message'] }}</p>
+            {% endfor %}
+        </div>
+        <p>
+            <input  type="text" id="message" autocomplete="off">
+            <input class="btn btn-primary" type="submit" id='submit' value="Send">
+            <input class="btn btn-default" type="button" id="signout" value="Sign Out">
+        </p>
     </body>
 </html>
