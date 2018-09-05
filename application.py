@@ -1,7 +1,8 @@
 from aiohttp import web
 import aiohttp_jinja2
 import jinja2
-from motor import motor_asyncio as ma
+from aiomysql.sa import create_engine
+import aiomysql
 
 from _core.config import settings
 from _core.controllers.main_controller import MainController
@@ -14,6 +15,13 @@ async def on_shutdown(app):
 
 application = web.Application()
 
+application['db'] = aiomysql.connect(
+    host=settings.DATABASE_HOST,
+    user=settings.DATABASE_USER,
+    password=settings.DATABASE_PASSWORD,
+    db=settings.DATABASE_NAME
+)
+
 aiohttp_jinja2.setup(application, loader=jinja2.FileSystemLoader('_core/views'))
 
 application.router.add_route('GET', '/', MainController)
@@ -21,10 +29,6 @@ application.router.add_route('GET', '/ws', WebSocketController)
 
 application['static_root_url'] = '/static'
 application.router.add_static('/static', 'static', name='static')
-
-# db connect
-application.client = ma.AsyncIOMotorClient(MONGO_HOST)
-application.db = app.client[MONGO_DB_NAME]
 
 application.on_cleanup.append(on_shutdown)
 application['websockets'] = []
