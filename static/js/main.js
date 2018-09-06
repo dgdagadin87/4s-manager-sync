@@ -66,9 +66,9 @@ $(document).ready(function(){
 
     sock.onclose = function(event){
         if(event.wasClean){
-            showMessage('Clean connection end');
+            console.log('Clean connection end');
         }else{
-            showMessage('Connection broken');
+            console.log('Connection broken');
         }
     };
 

@@ -7,18 +7,100 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="{{ static('css/style.css') }}" rel="stylesheet">
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-        <script src="{{ static('js/main.js') }}"></script>
+        <!--<script src="{{ static('js/main.js') }}"></script>-->
     </head>
     <body id="main-body">
-        <div id='subscribe'>
-            {% for link in sync_links %}
-            <p>{{ link[1] }}</p>
-            {% endfor %}
+        <div class="fs--main-container">
+            <div class="fs--main-center">
+
+                <div class="fs--main-header">
+                    <div class="fs--top-header">
+                        <table cellspacing="0" cellpadding="0" class="fs--top-header-table">
+                            <tbody>
+                                <tr>
+                                    <td class="fs--top-header-menu-td" id="header-region">
+                                        <div class="header-menu">
+                                            <div class="header-menu-container">
+                                                <div class="header-menu-item-div">
+                                                    <strong style="font-size:17px;">Модуль синхронизации 4s-manager</strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="fs--top-header-search-td">
+                                        &nbsp;
+                                    </td>
+                                    <td class="fs--top-header-user-td" id="user-info-region">
+                                        &nbsp;
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="fs--main-content">
+                    <div class="settings-links">
+                        <div class="settings-table-container">
+                            <table class="settings-sync-table" cellspacing="0" cellpadding="0">
+                                <thead>
+                                    <tr>
+                                        <td class="checkbox-cell">
+                                            <input type="checkbox" class="delete-checkbox all-checkbox">
+                                        </td>
+                                        <td class="name-cell">Название</td>
+                                        <td class="href-cell">Адрес</td>
+                                        <td class="switch-cell">Вкл.</td>
+                                        <td class="multi-cell">М/с</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for link in sync_links %}
+                                    <tr class="grid-row">
+                                        <td class="checkbox-item-cell">
+                                            <input type="checkbox" class="delete-checkbox">
+                                        </td>
+                                        <td class="name-item-cell">{{ link[1] }}</td>
+                                        <td class="href-item-cell">
+                                            <a target="_blank" href="{{ link[2] }}">{{ link[2] }}</a>
+                                        </td>
+                                        <td class="switch-item-cell">
+                                            <div title="Ссылка включена" class="radio-class yes"></div>
+                                        </td>
+                                        <td class="multi-item-cell">
+                                            <div title="Многостраничность включена" class="radio-class yes"></div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="fs--main-footer" id="footer-region">
+                <div class="under-footer">
+                    <div class="left-one">
+                        <div>
+                            <a target="_blank" href="https://github.com/dgdagadin87/4s-manager-sync">Ссылка</a> на репозиторий проекта
+                        </div>
+                        <div>
+                            Контент взят с <a target="_blank" href="http://4stor.ru">4stor.ru</a>
+                        </div>
+                    </div>
+                    <div class="center-one">
+                        2018 ©
+                    </div>
+                    <div class="right-one">
+                        <div>
+                            Автор проекта: <a href="mailto:dgdagadin@gmail.com">dgdagadin@gmail.com</a>
+                        </div>
+                        <div>
+                            version 0.0.5
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <p>
-            <input  type="text" id="message" autocomplete="off">
-            <input class="btn btn-primary" type="submit" id='submit' value="Send">
-            <input class="btn btn-default" type="button" id="signout" value="Sign Out">
-        </p>
     </body>
 </html>
