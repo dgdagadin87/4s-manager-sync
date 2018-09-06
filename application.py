@@ -1,7 +1,6 @@
 from aiohttp import web
 import aiohttp_jinja2
 import jinja2
-from aiomysql.sa import create_engine
 import aiomysql
 
 from _core.config import settings

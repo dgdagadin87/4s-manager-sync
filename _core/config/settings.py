@@ -1,7 +1,8 @@
 SERVER_HOST = '0.0.0.0'
 SERVER_PORT = 1234
 
-DATABASE_HOST = 'database_host'
+DATABASE_HOST = 'mysql93.1gb.ru'
 DATABASE_PORT = 777
-DATABASE_NAME = 'database'
-DATABASE_USER = 'user'
+DATABASE_NAME = 'gb_4stor'
+DATABASE_USER = 'gb_4stor'
+DATABASE_PASSWORD = '339a6zf9auiw'

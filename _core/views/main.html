@@ -11,8 +11,8 @@
     </head>
     <body id="main-body">
         <div id='subscribe'>
-            {% for mes in messages %}
-            <p>{{ mes['message'] }}</p>
+            {% for link in sync_links %}
+            <p>{{ link[1] }}</p>
             {% endfor %}
         </div>
         <p>
