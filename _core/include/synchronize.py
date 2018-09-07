@@ -25,7 +25,7 @@ class ServerSync(object):
             await self._synchronize_link(link)
 
         # Закрытие соединения к БД
-        self._close_connection()
+        await self._close_connection()
 
         # Окончание синхронизации
         await self._end_synchronize()
@@ -40,7 +40,8 @@ class ServerSync(object):
         self._db_connection = await create_connection()
         self._db_cursor = await self._db_connection.cursor()
 
-    def _close_connection(self):
+    async def _close_connection(self):
+        await self._db_cursor.close()
         self._db_connection.close()
 
     async def _get_sync_links(self):

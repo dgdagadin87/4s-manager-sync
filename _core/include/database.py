@@ -1,5 +1,5 @@
 import aiomysql
-from _core.config import settings
+from _core.config import settings, sql
 
 
 async def create_connection():
@@ -18,9 +18,8 @@ async def get_sync_links(db_cursor, link_ids=None):
     result = []
 
     try:
-        where_section = 'linkIsOn = \'y\'' if link_ids is None else 'linkId in (' + link_ids + ')'
-        sql = "SELECT * FROM sync_links sl WHERE " + where_section + " ORDER BY sl.linkName ASC"
-        await db_cursor.execute(sql)
+        sql_string = sql.get_sync_links(link_ids)
+        await db_cursor.execute(sql_string)
         result = await db_cursor.fetchall()
     except Exception as e:
         print(e)

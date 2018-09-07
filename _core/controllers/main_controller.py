@@ -15,6 +15,8 @@ class MainController(web.View):
 
         sync_links = await get_sync_links(cursor)
 
+        await cursor.close()
+
         db_connection.close()
 
         return {'sync_links': sync_links}
