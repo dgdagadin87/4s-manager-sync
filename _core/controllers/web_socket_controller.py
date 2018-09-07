@@ -20,7 +20,6 @@ class WebSocketController(web.View):
         self._ws = ws
 
         application = self.request.app
-        # await ws.send_str('Socket was created')
         application['websockets'].append(ws)
 
         async for message in ws:
