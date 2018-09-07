@@ -1,7 +1,6 @@
 from aiohttp import web, WSMsgType
 from ..config import settings
 
-from ..include.database import synchronize_link
 from ..include.helpers import json2object
 from ..include.synchronize import ServerSync
 
