@@ -31,7 +31,6 @@ class WebSocketController(web.View):
             message_object = json2object(message_data)
             content_type = message_object[0]
             content_data = message_object[1]
-            print(content_type, settings.WS_COMMON_START_SYNC)
 
             # Если отправка без ошибки
             if message_type == WSMsgType.TEXT:
