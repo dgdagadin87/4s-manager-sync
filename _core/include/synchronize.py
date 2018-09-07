@@ -36,10 +36,10 @@ class ServerSync(object):
         await self._end_synchronize()
 
     async def _start_synchronize(self):
-        await self._websocket_send(type=settings.WS_COMMON_START_SYNC, content=None)
+        await self._websocket_send(type=settings.WS_COMMON_START_SYNC, content='')
 
     async def _end_synchronize(self):
-        await self._websocket_send(type=settings.WS_COMMON_END_SYNC, content=None)
+        await self._websocket_send(type=settings.WS_COMMON_END_SYNC, content='')
 
     async def _create_connection(self):
         self._db_context = await create_connection()
