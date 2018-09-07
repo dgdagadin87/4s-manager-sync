@@ -20,7 +20,6 @@ async def get_sync_links(db_cursor, link_ids=None):
     try:
         where_section = 'linkIsOn = \'y\'' if link_ids is None else 'linkId in (' + link_ids + ')'
         sql = "SELECT * FROM sync_links sl WHERE " + where_section + " ORDER BY sl.linkName ASC"
-        print(sql)
         await db_cursor.execute(sql)
         result = await db_cursor.fetchall()
     except Exception as e:

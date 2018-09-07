@@ -9,11 +9,12 @@ class MainController(web.View):
     @aiohttp_jinja2.template('main.html')
     async def get(self):
 
-        db_context = await create_connection()
+        db_connection = await create_connection()
 
-        async with db_context as connection, connection.cursor() as cursor:
-            sync_links = await get_sync_links(cursor)
+        cursor = await db_connection.cursor()
 
-        connection.close()
+        sync_links = await get_sync_links(cursor)
+
+        db_connection.close()
 
         return {'sync_links': sync_links}
