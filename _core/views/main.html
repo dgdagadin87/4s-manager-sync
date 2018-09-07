@@ -7,7 +7,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="{{ static('css/style.css') }}" rel="stylesheet">
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-        <!--<script src="{{ static('js/main.js') }}"></script>-->
+        <script src="{{ static('js/main.js') }}"></script>
     </head>
     <body id="main-body">
         <div class="fs--main-container">
@@ -40,6 +40,16 @@
                 </div>
 
                 <div class="fs--main-content">
+
+                    <div class="toolbar-region">
+                        <div class="grid-toolbar">
+                            <div id="sync-button" title="Синхронизировать с 4stor.ru" class="tbar-button button-sync toolbar-for-disabled">
+                                <span class="image sync"></span>
+                                <span class="text">Синхронизировать</span>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="settings-links">
                         <div class="settings-table-container">
                             <table class="settings-sync-table" cellspacing="0" cellpadding="0">
@@ -58,17 +68,17 @@
                                     {% for link in sync_links %}
                                     <tr class="grid-row">
                                         <td class="checkbox-item-cell">
-                                            <input type="checkbox" class="delete-checkbox">
+                                            <input itemId="{{link[0]}}" type="checkbox" class="sync-checkbox">
                                         </td>
                                         <td class="name-item-cell">{{ link[1] }}</td>
                                         <td class="href-item-cell">
                                             <a target="_blank" href="{{ link[2] }}">{{ link[2] }}</a>
                                         </td>
                                         <td class="switch-item-cell">
-                                            <div title="Ссылка включена" class="radio-class yes"></div>
+                                            <div title="Ссылка {% if link[3] == 'n' %}не{% endif %} включена" class="radio-class {% if link[3] == 'y' %}yes{% else %}no{% endif %}"></div>
                                         </td>
                                         <td class="multi-item-cell">
-                                            <div title="Многостраничность включена" class="radio-class yes"></div>
+                                            <div title="Многостраничность {%- if link[4] == 'n' -%}не{% endif %} включена" class="radio-class  {% if link[4] == 'y' %}yes{% else %}no{% endif %}"></div>
                                         </td>
                                     </tr>
                                     {% endfor %}

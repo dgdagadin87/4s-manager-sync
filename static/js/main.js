@@ -7,72 +7,52 @@ $(document).ready(function(){
         sock = new WebSocket('wss://' + window.location.host + '/ws');
     }
 
-    // show message in div#subscribe
-    function showMessage(message) {
-        var messageElem = $('#subscribe'),
-            height = 0,
-            date = new Date(),
-            options = { hour12: false },
-            htmlText = '[' + date.toLocaleTimeString('en-US', options) + '] ';
+    $('#sync-button').click(function(){
 
-        try{
-            var messageObj = JSON.parse(message);
-            if (!!messageObj.message){
-                htmlText = htmlText  +
-                messageObj.message + '\n';
-            } else {
-                htmlText = htmlText + message;
+        var checkBoxes = $('.sync-checkbox');
+        var items = [];
+
+        checkBoxes.each(function(i, syncCheckbox){
+            var currentItem = $(syncCheckbox);
+            var isChecked = currentItem.prop('checked');
+            var currentId = currentItem.attr('itemId');
+
+            if (isChecked) {
+                items.push(currentId)
             }
-        } catch (e){
-            htmlText = htmlText + message;
-        }
-        messageElem.append($('<p>').html(htmlText));
-
-        messageElem.find('p').each(function(i, value){
-            height += parseInt($(this).height());
         });
-        messageElem.animate({scrollTop: height});
-    }
 
-    function sendMessage(){
-        var msg = $('#message');
-        sock.send(msg.val());
-        msg.val('').focus();
-    }
+        if (items.length < 1) {
+            alert('Выберите категории для синхронизации');
+            return;
+        }
+
+        sock.send(JSON.stringify({
+            msg_type: 'COMMON_START_SYNC',
+            msg_data: items.join(',')
+        }));
+    });
 
     sock.onopen = function(){
-        //showMessage('Connection to server started');
+        console.log('Connection to server started');
     };
 
-    // send message from form
-    $('#submit').click(function() {
-        sendMessage();
-    });
-
-    $('#message').keyup(function(e){
-        if(e.keyCode == 13){
-            sendMessage();
-        }
-    });
-
-    // income message handler
     sock.onmessage = function(event) {
-        showMessage(event.data);
-    };
 
-    $('#signout').click(function(){
-        window.location.href = "signout";
-    });
+        var data = event.data || '{}'
+        console.log(JSON.parse(data))
+    };
 
     sock.onclose = function(event){
         if(event.wasClean){
             console.log('Clean connection end');
-        }else{
+        }
+        else{
             console.log('Connection broken');
         }
     };
 
     sock.onerror = function(error){
-        showMessage(error);
+        console.log(error);
     };
 });
