@@ -1,6 +1,21 @@
-async def get_sync_links(application):
+import aiomysql
+from _core.config import settings
 
-    connection_context = application['db']
+
+async def create_connection():
+    connection = await aiomysql.connect(
+        host=settings.DATABASE_HOST,
+        user=settings.DATABASE_USER,
+        password=settings.DATABASE_PASSWORD,
+        db=settings.DATABASE_NAME
+    )
+
+    return connection
+
+
+async def get_sync_links():
+
+    connection_context = await create_connection()
 
     result = []
 

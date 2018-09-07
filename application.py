@@ -1,7 +1,6 @@
 from aiohttp import web
 import aiohttp_jinja2
 import jinja2
-import aiomysql
 
 from _core.config import settings
 from _core.controllers.main_controller import MainController
@@ -13,13 +12,6 @@ async def on_shutdown(app):
         await ws.close(code=1001, message='Server shutdown')
 
 application = web.Application()
-
-application['db'] = aiomysql.connect(
-    host=settings.DATABASE_HOST,
-    user=settings.DATABASE_USER,
-    password=settings.DATABASE_PASSWORD,
-    db=settings.DATABASE_NAME
-)
 
 aiohttp_jinja2.setup(application, loader=jinja2.FileSystemLoader('_core/views'))
 

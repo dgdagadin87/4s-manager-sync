@@ -9,5 +9,5 @@ class MainController(web.View):
     @aiohttp_jinja2.template('main.html')
     async def get(self):
 
-        sync_links = await get_sync_links(self.request.app)
+        sync_links = await get_sync_links()
         return {'sync_links': sync_links}
