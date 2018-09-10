@@ -13,6 +13,11 @@ async def create_connection():
     return connection
 
 
+def esacpe_string(connection, string):
+
+    return connection.escape_string(string)
+
+
 async def get_sync_links(db_cursor, link_ids=None):
 
     result = []
@@ -27,22 +32,60 @@ async def get_sync_links(db_cursor, link_ids=None):
     return result
 
 
-async def synchronize_link(name, send_method):
+async def get_stor_info(db_cursor, stor):
 
-    from asyncio import sleep
+    stor_id = int(stor.get('id'))
 
-    await send_method(settings.WS_START_SYNC, name)
+    result = False
 
-    await sleep(2)
+    try:
+        sql_string = sql.get_stor_info(stor_id)
+        await db_cursor.execute(sql_string)
+        result = await db_cursor.fetchall()
+    except Exception as e:
+        print(e)
 
-    await send_method(settings.WS_PAGE_SYNCHED, '1')
+    return result
 
-    await sleep(2)
 
-    await send_method(settings.WS_PAGE_SYNCHED, '2')
+async def update_stor_rate(db_cursor, stor_rate, stor_id):
 
-    await sleep(2)
+    result = False
 
-    await send_method(settings.WS_PAGE_SYNCHED, '3')
+    try:
+        sql_string = sql.update_stor_rate(stor_rate, stor_id)
+        await db_cursor.execute(sql_string)
+        result = await db_cursor.fetchall()
+    except Exception as e:
+        print(e)
 
-    await send_method(settings.WS_END_SYNC, name)
+    return result
+
+
+async def get_author_info(db_cursor, author_name):
+
+    result = False
+
+    try:
+        sql_string = sql.get_author_info(author_name)
+        await db_cursor.execute(sql_string)
+        result = await db_cursor.fetchall()
+    except Exception as e:
+        print(e)
+
+    return result
+
+
+async def insert_author(db_cursor, author_name, author_href):
+
+    result = False
+
+    try:
+        sql_string = sql.insert_author(author_name, author_href)
+        await db_cursor.execute(sql_string)
+        result = await db_cursor.fetchall()
+    except Exception as e:
+        print(e)
+
+    return result
+

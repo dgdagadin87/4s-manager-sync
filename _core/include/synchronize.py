@@ -4,7 +4,8 @@ from lxml import html, etree
 from datetime import datetime, timedelta
 
 from ..config import settings
-from .database import create_connection, get_sync_links, synchronize_link
+from .database import create_connection, esacpe_string, get_sync_links
+from .database import get_stor_info, update_stor_rate, get_author_info, insert_author
 
 
 class ServerSync(object):
@@ -156,7 +157,41 @@ class ServerSync(object):
             cats.insert(_cnt, cur_cats)
 
         page_collection = ServerSync._get_page_collection(ids, names, links, rates, descs, authors, cats, dates, watches, comments)
-        print(page_collection)
+        await self._put_page_into_db(page_collection)
+
+    async def _put_page_into_db(self, collection):
+
+        for stor in collection:
+
+            # Узнать есть ли в БД
+            stor_info = await get_stor_info(self._db_cursor, stor)
+            # if !stor_info: put_error_in_log
+
+            # Если есть - обновить информацию
+            if len(stor_info) > 0:
+
+                stor_rate = esacpe_string(self._db_connection, stor['rate'])
+                stor_id = int(stor['id'])
+
+                result = await update_stor_rate(self._db_cursor, stor_rate, stor_id)
+
+            # Если нет - добавить:
+            else:
+
+                # -Автора
+                author_data = stor['author']
+                author_name = esacpe_string(self._db_connection, author_data['name'])
+                author_href = esacpe_string(self._db_connection, author_data['href'])
+
+                author_info = await get_author_info(self._db_cursor, author_name)
+                # if !stor_info: put_error_in_log
+
+                if len(author_info) < 1:
+                    author_info = await insert_author(self._db_cursor, author_name, author_href)
+                    # if !stor_info: put_error_in_log
+
+                # -Категории
+                # -Данные истории
 
     @staticmethod
     def _get_stor_id(element):
@@ -279,6 +314,7 @@ class ServerSync(object):
         for i in range(len(stor_ids)):
 
             current_stor = {
+                'id'      : stor_ids[i],
                 'name'    : stor_names[i],
                 'link'    : stor_links[i],
                 'rate'    : stor_rates[i],
