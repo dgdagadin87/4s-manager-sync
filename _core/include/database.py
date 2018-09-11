@@ -13,7 +13,7 @@ async def create_connection():
     return connection
 
 
-def esacpe_string(connection, string):
+def escape_string(connection, string):
 
     return connection.escape_string(string)
 
@@ -89,3 +89,71 @@ async def insert_author(db_cursor, author_name, author_href):
 
     return result
 
+
+async def get_category_info(db_cursor, cat_name):
+
+    result = False
+
+    try:
+        sql_string = sql.get_category_info(cat_name)
+        await db_cursor.execute(sql_string)
+        result = await db_cursor.fetchall()
+    except Exception as e:
+        print(e)
+
+    return result
+
+
+async def insert_category(db_cursor, category_name, category_href):
+
+    result = False
+
+    try:
+        sql_string = sql.insert_category(category_name, category_href)
+        await db_cursor.execute(sql_string)
+        result = await db_cursor.fetchall()
+    except Exception as e:
+        print(e)
+
+    return result
+
+
+async def insert_stor(db_cursor, stor_id, stor_name, stor_href, stor_rate, stor_date, stor_desc, stor_comments, stor_watches, stor_author_id):
+
+    result = False
+
+    try:
+        sql_string = sql.insert_stor(stor_id, stor_name, stor_href, stor_rate, stor_date, stor_desc, stor_comments, stor_watches, stor_author_id)
+        await db_cursor.execute(sql_string)
+        result = await db_cursor.fetchall()
+    except Exception as e:
+        print(e)
+
+    return result
+
+async def get_categories(db_cursor, cat_names):
+
+    result = False
+
+    try:
+        sql_string = sql.get_categories(cat_names)
+        await db_cursor.execute(sql_string)
+        result = await db_cursor.fetchall()
+    except Exception as e:
+        print(e)
+
+    return result
+
+
+async def insert_cat_2_stors(db_cursor, cat_2_stors_list):
+
+    result = False
+
+    try:
+        sql_string = sql.insert_cat_2_stors(cat_2_stors_list)
+        await db_cursor.execute(sql_string)
+        result = await db_cursor.fetchall()
+    except Exception as e:
+        print(e)
+
+    return result

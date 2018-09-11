@@ -4,8 +4,10 @@ from lxml import html, etree
 from datetime import datetime, timedelta
 
 from ..config import settings
-from .database import create_connection, esacpe_string, get_sync_links
-from .database import get_stor_info, update_stor_rate, get_author_info, insert_author
+from .database import get_stor_info, update_stor_rate
+from .database import get_author_info, insert_author, get_categories
+from .database import get_category_info, insert_category, insert_stor
+from .database import create_connection, escape_string, get_sync_links, insert_cat_2_stors
 
 
 class ServerSync(object):
@@ -170,7 +172,7 @@ class ServerSync(object):
             # Если есть - обновить информацию
             if len(stor_info) > 0:
 
-                stor_rate = esacpe_string(self._db_connection, stor['rate'])
+                stor_rate = escape_string(self._db_connection, stor['rate'])
                 stor_id = int(stor['id'])
 
                 result = await update_stor_rate(self._db_cursor, stor_rate, stor_id)
@@ -180,18 +182,63 @@ class ServerSync(object):
 
                 # -Автора
                 author_data = stor['author']
-                author_name = esacpe_string(self._db_connection, author_data['name'])
-                author_href = esacpe_string(self._db_connection, author_data['href'])
+                author_name = escape_string(self._db_connection, author_data['name'])
+                author_href = escape_string(self._db_connection, author_data['href'])
 
                 author_info = await get_author_info(self._db_cursor, author_name)
-                # if !stor_info: put_error_in_log
+                # if !author_info: put_error_in_log
 
                 if len(author_info) < 1:
-                    author_info = await insert_author(self._db_cursor, author_name, author_href)
-                    # if !stor_info: put_error_in_log
+                    insert_info = await insert_author(self._db_cursor, author_name, author_href)
+                    # if !insert_info: put_error_in_log
 
                 # -Категории
+                cats_data = stor['cats']
+
+                for category in cats_data:
+
+                    cat_name = escape_string(self._db_connection, category)
+                    cat_href = escape_string(self._db_connection, 'category link_')
+
+                    category_info = await get_category_info(self._db_cursor, cat_name)
+                    # if !category_info: put_error_in_log
+
+                    if len(category_info) < 1:
+                        insert_info = await insert_category(self._db_cursor, cat_name, cat_href)
+                        # if !insert_info: put_error_in_log
+
                 # -Данные истории
+                stor_id = str(int(stor['id']))  # !!! #
+                stor_name = escape_string(self._db_connection, stor['name'])
+                stor_href = escape_string(self._db_connection, stor['link'])
+                stor_desc = escape_string(self._db_connection, stor['desc'])
+                stor_rate = escape_string(self._db_connection, stor['rate'])
+                stor_date = escape_string(self._db_connection, stor['date'])
+                stor_watches = str(int(stor['watches']))
+                stor_comments = str(int(stor['comments']))
+                author_info = await get_author_info(self._db_cursor, author_name)
+                author_row = author_info[0]
+                stor_author_id = str(int(author_row[0]))
+                # if !author_info: put_error_in_log
+
+                stor_insert_info = await insert_stor(self._db_cursor, stor_id, stor_name, stor_href, stor_rate, stor_date, stor_desc, stor_comments, stor_watches, stor_author_id)
+                # if !stor_author_id: put_error_in_log
+
+                cat_escaped_names = []
+                for cat_name in cats_data:
+                    cat_escaped_names.append('\'' + escape_string(self._db_connection, cat_name) + '\'')
+
+                categories_data = await get_categories(self._db_cursor, cat_escaped_names)
+                # if !categories_data: put_error_in_log
+
+                cat_2_stor_list = []
+                for cat_row in categories_data:
+                    cat_2_stor_list.append('(\'' + str(cat_row[0]) + '\', \'' + stor_id + '\')')
+
+                stor_2_cat_insert = await insert_cat_2_stors(self._db_cursor, cat_2_stor_list)
+                # if !categories_data: put_error_in_log
+
+
 
     @staticmethod
     def _get_stor_id(element):
