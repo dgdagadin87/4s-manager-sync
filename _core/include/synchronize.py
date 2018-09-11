@@ -63,9 +63,10 @@ class ServerSync(object):
         await self._websocket_send(settings.WS_START_SYNC, link_name)
 
         if is_link_multipage:
-            for i in range(100000):
+            for i in range(1, 10):
                 page_href = link[2] + 'page/' + str(i) + '/'
                 sync_page_result = await self._synchronize_page(page_href)
+                await self._websocket_send(settings.WS_END_SYNC, 'Страница ' + str(i))
                 if sync_page_result is None:
                     await self._websocket_send(settings.WS_END_SYNC, link_name)
                     break
@@ -74,6 +75,9 @@ class ServerSync(object):
             await self._websocket_send(settings.WS_END_SYNC, link_name)
 
     async def _synchronize_page(self, page_href):
+
+        import asyncio
+        await asyncio.sleep(1)
 
         try:
             async with aiohttp.ClientSession() as session:
@@ -161,6 +165,8 @@ class ServerSync(object):
         page_collection = ServerSync._get_page_collection(ids, names, links, rates, descs, authors, cats, dates, watches, comments)
         await self._put_page_into_db(page_collection)
 
+        return True
+
     async def _put_page_into_db(self, collection):
 
         for stor in collection:
@@ -198,7 +204,7 @@ class ServerSync(object):
                 for category in cats_data:
 
                     cat_name = escape_string(self._db_connection, category)
-                    cat_href = escape_string(self._db_connection, 'category link_')
+                    cat_href = escape_string(self._db_connection, 'category link_' + cat_name)
 
                     category_info = await get_category_info(self._db_cursor, cat_name)
                     # if !category_info: put_error_in_log
@@ -237,8 +243,6 @@ class ServerSync(object):
 
                 stor_2_cat_insert = await insert_cat_2_stors(self._db_cursor, cat_2_stor_list)
                 # if !categories_data: put_error_in_log
-
-
 
     @staticmethod
     def _get_stor_id(element):
