@@ -4,6 +4,7 @@ from lxml import html, etree
 from datetime import datetime, timedelta
 
 from ..config import settings
+from .helpers import object2string
 from .database import get_stor_info, update_stor_rate, start_sync
 from .database import get_author_info, insert_author, get_categories
 from .database import get_category_info, insert_category, insert_stor
