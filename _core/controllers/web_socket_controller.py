@@ -9,17 +9,25 @@ class WebSocketController(web.View):
 
     async def _send_websocket_message(self, type, content):
 
-        await self._ws.send_str('{"type": "%s", "content": "%s"}' % (type, content))
+        application = self.request.app
+        web_sockets = application['websockets']
+        for ws_item in web_sockets:
+            current_ws = ws_item.get('source')
+            await current_ws.send_str('{"type": "%s", "content": "%s"}' % (type, content))
 
     async def get(self):
 
         ws = web.WebSocketResponse()
         await ws.prepare(self.request)
 
-        self._ws = ws
+        request_params = self.request.rel_url.raw_parts
+        ws_name = request_params[1]
 
         application = self.request.app
-        application['websockets'].append(ws)
+        application['websockets'].append({
+            'source': ws,
+            'name': ws_name
+        })
 
         async for message in ws:
 
@@ -46,8 +54,11 @@ class WebSocketController(web.View):
                 print('ws connection closed with exception %s' % ws.exception())
 
         application['websockets'].remove(ws)
-        for _ws in self.request.app['websockets']:
-            _ws.send_str('main ws disconected')
-        print('websocket connection closed')
+
+        for ws_item in application['websockets']:
+            current_ws = ws_item.get('source')
+            await current_ws.send_str('main ws disconected')
+
+        print('web-socket connection closed')
 
         return ws

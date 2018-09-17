@@ -16,7 +16,7 @@ application = web.Application()
 aiohttp_jinja2.setup(application, loader=jinja2.FileSystemLoader('_core/views'))
 
 application.router.add_route('GET', '/', MainController)
-application.router.add_route('GET', '/ws', WebSocketController)
+application.router.add_route('GET', '/{id}/ws', WebSocketController)
 
 application['static_root_url'] = '/static'
 application.router.add_static('/static', 'static', name='static')

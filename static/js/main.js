@@ -11,13 +11,13 @@ function getFullTime() {
     var m = addZero(d.getMinutes(), 2);
     var s = addZero(d.getSeconds(), 2);
     var ms = addZero(d.getMilliseconds(), 3);
-    return (h + m + s + ms);
+    return (String(h) + String(m) + String(s) + String(ms));
 }
 
 $(document).ready(function(){
     var sock = {};
     try{
-        sock = new WebSocket('ws://' + window.location.host + '/ws');
+        sock = new WebSocket('ws://' + window.location.host + '/' + getFullTime() + '/ws');
     }
     catch(err){
         sock = new WebSocket('wss://' + window.location.host + '/ws');
