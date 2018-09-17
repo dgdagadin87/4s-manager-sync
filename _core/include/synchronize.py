@@ -4,7 +4,7 @@ from lxml import html, etree
 from datetime import datetime, timedelta
 
 from ..config import settings
-from .database import get_stor_info, update_stor_rate
+from .database import get_stor_info, update_stor_rate, start_sync
 from .database import get_author_info, insert_author, get_categories
 from .database import get_category_info, insert_category, insert_stor
 from .database import create_connection, escape_string, get_sync_links, insert_cat_2_stors
@@ -19,11 +19,11 @@ class ServerSync(object):
 
     async def run(self):
 
-        # Старт синхронизации
-        await self._start_synchronize()
-
         # Соединение к БД
         await self._create_connection()
+
+        # Старт синхронизации
+        await self._start_synchronize()
 
         # Получение списка синхронизируемых категорий
         await self._get_sync_links()
@@ -32,16 +32,18 @@ class ServerSync(object):
         for link in self._sync_links:
             await self._synchronize_link(link)
 
-        # Закрытие соединения к БД
-        await self._close_connection()
-
         # Окончание синхронизации
         await self._end_synchronize()
 
+        # Закрытие соединения к БД
+        await self._close_connection()
+
     async def _start_synchronize(self):
+        await start_sync(self._db_cursor, True)
         await self._websocket_send(type=settings.WS_COMMON_START_SYNC, content='')
 
     async def _end_synchronize(self):
+        await start_sync(self._db_cursor, False)
         await self._websocket_send(type=settings.WS_COMMON_END_SYNC, content='')
 
     async def _create_connection(self):
@@ -182,6 +184,7 @@ class ServerSync(object):
                 stor_id = int(stor['id'])
 
                 result = await update_stor_rate(self._db_cursor, stor_rate, stor_id)
+                # if !result: put_error_in_log
 
             # Если нет - добавить:
             else:
@@ -204,7 +207,7 @@ class ServerSync(object):
                 for category in cats_data:
 
                     cat_name = escape_string(self._db_connection, category)
-                    cat_href = escape_string(self._db_connection, 'category link_' + cat_name)
+                    cat_href = escape_string(self._db_connection, 'category link_%s' % cat_name)
 
                     category_info = await get_category_info(self._db_cursor, cat_name)
                     # if !category_info: put_error_in_log

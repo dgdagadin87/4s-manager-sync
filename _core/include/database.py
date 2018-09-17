@@ -18,6 +18,37 @@ def escape_string(connection, string):
     return connection.escape_string(string)
 
 
+async def start_sync(db_cursor, state):
+
+    result = False
+
+    if state:
+        try:
+            sql_string = sql.check_sync()
+            await db_cursor.execute(sql_string)
+            result = await db_cursor.fetchall()
+        except Exception as e:
+            print(e)
+
+        if len(result) > 0:
+            return False
+        else:
+            row = result[0]
+            setting_value = row[2]
+
+        if setting_value == 'true':
+            return True
+
+    try:
+        sql_string = sql.start_sync(state)
+        await db_cursor.execute(sql_string)
+        result = await db_cursor.fetchall()
+    except Exception as e:
+        print(e)
+
+    return result
+
+
 async def get_sync_links(db_cursor, link_ids=None):
 
     result = []

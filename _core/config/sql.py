@@ -1,3 +1,14 @@
+def start_sync(state):
+
+    insert_state = 'true' if state else 'false'
+    return 'UPDATE `settings` SET settingValue = \'' + insert_state + '\' WHERE settingName = \'is_sync\''
+
+
+def check_sync():
+
+    return 'SELECT * FROM `settings` WHERE settingName = \'is_sync\''
+
+
 def get_sync_links(link_ids):
 
     where_section = 'linkIsOn = \'y\'' if link_ids is None else 'linkId in (' + link_ids + ')'
