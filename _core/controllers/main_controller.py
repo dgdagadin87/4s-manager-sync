@@ -19,4 +19,10 @@ class MainController(web.View):
 
         db_connection.close()
 
-        return {'sync_links': sync_links}
+        application = application = self.request.app
+        send_object = application['send_object']
+
+        return {
+            'sync_links': sync_links,
+            'send_object': send_object
+        }

@@ -10,8 +10,6 @@
         <!--[if IE]>
         <link href="{{ static('css/ie.css') }}" rel="stylesheet"/>
         <![endif]-->
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-        <script src="{{ static('js/main.js') }}"></script>
     </head>
     <body id="main-body">
         <div class="fs--main-container">
@@ -116,5 +114,16 @@
                 </div>
             </div>
         </div>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+        <script>
+            window.syncData = {};
+            {% for index in send_object %}
+            window.syncData['{{index}}'] = {};
+            window.syncData['{{index}}']['page'] = {{send_object[index]['page']}};
+            window.syncData['{{index}}']['state'] = '{{send_object[index]['state']}}';
+            {% endfor %}
+            console.log(window.syncData)
+        </script>
+        <script src="{{ static('js/main.js') }}"></script>
     </body>
 </html>

@@ -24,6 +24,8 @@ application.router.add_static('/static', 'static', name='static')
 application.on_cleanup.append(on_shutdown)
 application['websockets'] = []
 
+application['send_object'] = {}
+
 print('start server')
 web.run_app(application, host=settings.SERVER_HOST, port=settings.SERVER_PORT)
 print('Stop server end')

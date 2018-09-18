@@ -30,7 +30,7 @@ async def start_sync(db_cursor, state):
         except Exception as e:
             print(e)
 
-        if len(result) > 0:
+        if len(result) < 0:
             return False
         else:
             row = result[0]

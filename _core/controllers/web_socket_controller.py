@@ -1,19 +1,28 @@
 from aiohttp import web, WSMsgType
 from ..config import settings
 
-from ..include.helpers import json2object
+from ..include.helpers import json2object, object2string
 from ..include.synchronize import ServerSync
 
 
 class WebSocketController(web.View):
 
-    async def _send_websocket_message(self, type, content):
+    def _actualize_data(self, data):
+
+        self.request.app['sending_object'] = data
+
+    async def _send_websocket_message(self, content):
 
         application = self.request.app
         web_sockets = application['websockets']
         for ws_item in web_sockets:
             current_ws = ws_item.get('source')
-            await current_ws.send_str('{"type": "%s", "content": "%s"}' % (type, content))
+            await current_ws.send_str(content)
+
+    async def send_2_user(self, data):
+
+        self._actualize_data(data)
+        await self._send_websocket_message(object2string(data))
 
     async def get(self):
 
@@ -23,11 +32,13 @@ class WebSocketController(web.View):
         request_params = self.request.rel_url.raw_parts
         ws_name = request_params[1]
 
-        application = self.request.app
-        application['websockets'].append({
+        ws_dict = {
             'source': ws,
             'name': ws_name
-        })
+        }
+
+        application = self.request.app
+        application['websockets'].append(ws_dict)
 
         async for message in ws:
 
@@ -46,14 +57,14 @@ class WebSocketController(web.View):
                     await ws.close()
                 # Команда - обычный текст
                 elif content_type == settings.WS_COMMON_START_SYNC:
-                    server_sync = ServerSync(self._send_websocket_message, content_data)
+                    server_sync = ServerSync(self.send_2_user, self._actualize_data, application, content_data)
                     await server_sync.run()
 
             # Если отправка с ошибкой
             elif message.type == WSMsgType.ERROR:
                 print('ws connection closed with exception %s' % ws.exception())
 
-        application['websockets'].remove(ws)
+        application['websockets'].remove(ws_dict)
 
         for ws_item in application['websockets']:
             current_ws = ws_item.get('source')

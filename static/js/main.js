@@ -14,6 +14,11 @@ function getFullTime() {
     return (String(h) + String(m) + String(s) + String(ms));
 }
 
+function renderLog() {
+
+
+}
+
 $(document).ready(function(){
     var sock = {};
     try{

@@ -4,7 +4,6 @@ from lxml import html, etree
 from datetime import datetime, timedelta
 
 from ..config import settings
-from .helpers import object2string
 from .database import get_stor_info, update_stor_rate, start_sync
 from .database import get_author_info, insert_author, get_categories
 from .database import get_category_info, insert_category, insert_stor
@@ -13,9 +12,11 @@ from .database import create_connection, escape_string, get_sync_links, insert_c
 
 class ServerSync(object):
 
-    def __init__(self, send_method, link_ids):
+    def __init__(self, send_method, actualize_method, application, link_ids):
 
         self._websocket_send = send_method
+        self._data_actualize = actualize_method
+        self._application = application
         self._link_ids = link_ids
 
     async def run(self):
@@ -40,12 +41,14 @@ class ServerSync(object):
         await self._close_connection()
 
     async def _start_synchronize(self):
+        self._data_actualize({})
         await start_sync(self._db_cursor, True)
-        await self._websocket_send(type=settings.WS_COMMON_START_SYNC, content='')
 
     async def _end_synchronize(self):
         await start_sync(self._db_cursor, False)
-        await self._websocket_send(type=settings.WS_COMMON_END_SYNC, content='')
+        await self._websocket_send({})
+        #print('qqqqqqqqqqqqqqqqq')
+        #print(self._application['send_object'])
 
     async def _create_connection(self):
         self._db_connection = await create_connection()
@@ -58,24 +61,39 @@ class ServerSync(object):
     async def _get_sync_links(self):
         self._sync_links = await get_sync_links(self._db_cursor, link_ids=self._link_ids)
 
+    async def _send_2_user(self, type, name, page=0):
+
+        object_2_send = self._application['send_object']
+        current_object = dict()
+
+        current_object['page'] = page
+
+        current_object['state'] = type
+
+        object_2_send[name] = current_object
+
+        await self._websocket_send(object_2_send)
+
     async def _synchronize_link(self, link):
 
         link_name = link[1]
         is_link_multipage = True if link[4] == 'y' else False
 
-        await self._websocket_send(settings.WS_START_SYNC, link_name)
+        await self._send_2_user(settings.WS_START_SYNC, link_name)
+
+        i = 1
 
         if is_link_multipage:
             for i in range(1, 10):
                 page_href = link[2] + 'page/' + str(i) + '/'
                 sync_page_result = await self._synchronize_page(page_href)
-                await self._websocket_send(settings.WS_END_SYNC, 'Страница ' + str(i))
+                await self._send_2_user(settings.WS_PAGE_SYNCHED, link_name, i)
                 if sync_page_result is None:
-                    await self._websocket_send(settings.WS_END_SYNC, link_name)
                     break
         else:
             await self._synchronize_page(link[2])
-            await self._websocket_send(settings.WS_END_SYNC, link_name)
+
+        await self._send_2_user(settings.WS_END_SYNC, link_name, page=i)
 
     async def _synchronize_page(self, page_href):
 
