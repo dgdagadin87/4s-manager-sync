@@ -74,7 +74,7 @@ async def get_stor_info(db_cursor, stor):
         await db_cursor.execute(sql_string)
         result = await db_cursor.fetchall()
     except Exception as e:
-        print(e)
+        print('!!!!!!!!!!!!!!!!!!!', e)
 
     return result
 

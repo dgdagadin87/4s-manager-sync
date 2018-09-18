@@ -9,7 +9,7 @@ class WebSocketController(web.View):
 
     def _actualize_data(self, data):
 
-        self.request.app['sending_object'] = data
+        self.request.app['send_object'] = data
 
     async def _send_websocket_message(self, content):
 
@@ -17,7 +17,10 @@ class WebSocketController(web.View):
         web_sockets = application['websockets']
         for ws_item in web_sockets:
             current_ws = ws_item.get('source')
-            await current_ws.send_str(content)
+            try:
+                await current_ws.send_str(content)
+            except Exception as e:
+                print('kkkkkkkkkkkkkkkkk', e)
 
     async def send_2_user(self, data):
 

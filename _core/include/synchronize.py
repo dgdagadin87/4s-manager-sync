@@ -88,6 +88,7 @@ class ServerSync(object):
                 page_href = link[2] + 'page/' + str(i) + '/'
                 sync_page_result = await self._synchronize_page(page_href)
                 await self._send_2_user(settings.WS_PAGE_SYNCHED, link_name, i)
+                print('PAGE!!!')
                 if sync_page_result is None:
                     break
         else:

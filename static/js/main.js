@@ -14,12 +14,20 @@ function getFullTime() {
     return (String(h) + String(m) + String(s) + String(ms));
 }
 
+function getLength() {
+
+    return Object.keys(window.syncData).length;
+}
+
 function renderLog() {
 
 
 }
 
 $(document).ready(function(){
+
+    console.log(getLength())
+
     var sock = {};
     try{
         sock = new WebSocket('ws://' + window.location.host + '/' + getFullTime() + '/ws');
