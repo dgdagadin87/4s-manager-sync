@@ -19,7 +19,7 @@ class MainController(web.View):
 
         db_connection.close()
 
-        application = application = self.request.app
+        application = self.request.app
         send_object = application['send_object']
 
         return {

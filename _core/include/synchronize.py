@@ -47,8 +47,6 @@ class ServerSync(object):
     async def _end_synchronize(self):
         await start_sync(self._db_cursor, False)
         await self._websocket_send({})
-        #print('qqqqqqqqqqqqqqqqq')
-        #print(self._application['send_object'])
 
     async def _create_connection(self):
         self._db_connection = await create_connection()
@@ -88,7 +86,6 @@ class ServerSync(object):
                 page_href = link[2] + 'page/' + str(i) + '/'
                 sync_page_result = await self._synchronize_page(page_href)
                 await self._send_2_user(settings.WS_PAGE_SYNCHED, link_name, i)
-                print('PAGE!!!')
                 if sync_page_result is None:
                     break
         else:
@@ -196,6 +193,9 @@ class ServerSync(object):
             # Узнать есть ли в БД
             stor_info = await get_stor_info(self._db_cursor, stor)
             # if !stor_info: put_error_in_log
+            '''if stor_info is False:
+                print(stor['id'])
+                continue'''
 
             # Если есть - обновить информацию
             if len(stor_info) > 0:

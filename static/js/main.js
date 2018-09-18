@@ -1,36 +1,8 @@
-function addZero(x,n) {
-    while (x.toString().length < n) {
-        x = '0' + x;
-    }
-    return x;
-}
-
-function getFullTime() {
-    var d = new Date();
-    var h = addZero(d.getHours(), 2);
-    var m = addZero(d.getMinutes(), 2);
-    var s = addZero(d.getSeconds(), 2);
-    var ms = addZero(d.getMilliseconds(), 3);
-    return (String(h) + String(m) + String(s) + String(ms));
-}
-
-function getLength() {
-
-    return Object.keys(window.syncData).length;
-}
-
-function renderLog() {
-
-
-}
-
 $(document).ready(function(){
-
-    console.log(getLength())
 
     var sock = {};
     try{
-        sock = new WebSocket('ws://' + window.location.host + '/' + getFullTime() + '/ws');
+        sock = new WebSocket('ws://' + window.location.host + '/' + getConnectionName() + '/ws');
     }
     catch(err){
         sock = new WebSocket('wss://' + window.location.host + '/ws');
@@ -68,8 +40,8 @@ $(document).ready(function(){
 
     sock.onmessage = function(event) {
 
-        var data = event.data || '{}'
-        console.log(JSON.parse(data))
+        var data = event.data || '{}';console.log(data);
+        //console.log(JSON.parse(data))
     };
 
     sock.onclose = function(event){
@@ -85,3 +57,71 @@ $(document).ready(function(){
         console.log(error);
     };
 });
+
+function addZero(x,n) {
+    while (x.toString().length < n) {
+        x = '0' + x;
+    }
+    return x;
+}
+
+function getFullTime() {
+    var d = new Date();
+    var h = addZero(d.getHours(), 2);
+    var m = addZero(d.getMinutes(), 2);
+    var s = addZero(d.getSeconds(), 2);
+    var ms = addZero(d.getMilliseconds(), 3);
+    return (String(h) + String(m) + String(s) + String(ms));
+}
+
+function getLength() {
+
+    return Object.keys(window.syncData).length;
+}
+
+function getConnectionName() {
+
+    // Opera 8.0+
+    var isOpera = (!!window.opr && !!opr.addons) || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
+    if (isOpera) {
+        return 'opera';
+    }
+
+    // Firefox 1.0+
+    var isFirefox = typeof InstallTrigger !== 'undefined';
+    if (isFirefox) {
+        return 'firefox';
+    }
+
+    // Safari 3.0+ "[object HTMLElementConstructor]"
+    var isSafari = /constructor/i.test(window.HTMLElement) || (function (p) { return p.toString() === "[object SafariRemoteNotification]"; })(!window['safari'] || (typeof safari !== 'undefined' && safari.pushNotification));
+    if (isSafari) {
+        return 'safari';
+    }
+
+    // Internet Explorer 6-11
+    var isIE = /*@cc_on!@*/false || !!document.documentMode;
+    if (isIE) {
+        return 'ie';
+    }
+
+    // Edge 20+
+    var isEdge = !isIE && !!window.StyleMedia;
+    if (isEdge) {
+        return 'edge';
+    }
+
+    // Chrome 1+
+    var isChrome = !!window.chrome && !!window.chrome.webstore;
+    if (isChrome) {
+        return 'chrome';
+    }
+
+    // Blink engine detection
+    var isBlink = (isChrome || isOpera) && !!window.CSS;
+    if (isBlink) {
+        return 'blink';
+    }
+}
+
+function renderLog() {}

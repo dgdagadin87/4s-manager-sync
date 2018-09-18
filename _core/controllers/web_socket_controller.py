@@ -16,11 +16,8 @@ class WebSocketController(web.View):
         application = self.request.app
         web_sockets = application['websockets']
         for ws_item in web_sockets:
-            current_ws = ws_item.get('source')
-            try:
-                await current_ws.send_str(content)
-            except Exception as e:
-                print('kkkkkkkkkkkkkkkkk', e)
+            current_ws = web_sockets[ws_item]
+            await current_ws.send_str(content)
 
     async def send_2_user(self, data):
 
@@ -35,13 +32,8 @@ class WebSocketController(web.View):
         request_params = self.request.rel_url.raw_parts
         ws_name = request_params[1]
 
-        ws_dict = {
-            'source': ws,
-            'name': ws_name
-        }
-
         application = self.request.app
-        application['websockets'].append(ws_dict)
+        application['websockets'][ws_name] = ws
 
         async for message in ws:
 
@@ -62,15 +54,18 @@ class WebSocketController(web.View):
                 elif content_type == settings.WS_COMMON_START_SYNC:
                     server_sync = ServerSync(self.send_2_user, self._actualize_data, application, content_data)
                     await server_sync.run()
+                    '''for i in range(0, 30):
+                        await asyncio.sleep(1)
+                        await self._send_websocket_message('qqqqqqqqqqqqqqqq-------'+str(i))'''
 
             # Если отправка с ошибкой
             elif message.type == WSMsgType.ERROR:
                 print('ws connection closed with exception %s' % ws.exception())
 
-        application['websockets'].remove(ws_dict)
+        print(application['websockets'])
 
         for ws_item in application['websockets']:
-            current_ws = ws_item.get('source')
+            current_ws = application['websockets'][ws_item]
             await current_ws.send_str('main ws disconected')
 
         print('web-socket connection closed')
