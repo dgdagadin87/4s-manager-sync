@@ -1,5 +1,7 @@
 $(document).ready(function(){
 
+    renderLog();
+
     var sock = {};
     try{
         sock = new WebSocket('ws://' + window.location.host + '/' + getConnectionName() + '/ws');
@@ -43,6 +45,10 @@ $(document).ready(function(){
     sock.onmessage = function(event) {
 
         var data = event.data || '{}';
+        window.syncData = JSON.parse(data);
+
+        renderLog();
+
         console.log(data);
     };
 
@@ -126,4 +132,47 @@ function getConnectionName() {
     }
 }
 
-function renderLog() {}
+function renderLog() {
+
+    var mainContent = $('#main-application');
+    var messagesLog = $('#messages-log');
+
+    if (getLength() < 1) {
+        mainContent.css('display', 'block');
+        messagesLog.css('display', 'none');
+        messagesLog.html('');
+        return;
+    }
+
+    mainContent.css('display', 'none');
+    messagesLog.css('display', 'block');
+
+    var syncData = window.syncData;
+
+    var htmlContent = '';
+
+    for (var name in syncData) {
+
+        var currentContent = '';
+
+        var currentData = syncData[name];
+        var page = currentData['page'];
+        var state = currentData['state'];
+
+        if (state === 'START_SYNC') {
+            currentContent = '<span>начало синхронизации</span>';
+        }
+        else if (state === 'PAGE_SYNCHED') {
+            currentContent = '<span>синхронизация... (готово ' + page + ' страниц)</span>';
+        }
+        else if (state === 'DONE') {
+            currentContent = '<span>закончено (' + page + ' страниц)</span>';
+        }
+
+        currentContent = '<div><strong>' + name + ':</strong>&nbsp;&nbsp;' + currentContent + '</div>';
+
+        htmlContent += currentContent;
+    }
+
+    messagesLog.html(htmlContent);
+}

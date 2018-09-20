@@ -28,12 +28,6 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="fs--top-header-search-td">
-                                        &nbsp;
-                                    </td>
-                                    <td class="fs--top-header-user-td" id="user-info-region">
-                                        &nbsp;
-                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -41,50 +35,54 @@
                 </div>
 
                 <div class="fs--main-content">
-
-                    <div class="toolbar-region">
-                        <div class="grid-toolbar">
-                            <div id="sync-button" title="Синхронизировать с 4stor.ru" class="tbar-button button-sync toolbar-for-disabled">
-                                <span class="image sync"></span>
-                                <span class="text">Синхронизировать</span>
+                    <div id="messages-log" style="margin-left:50px; margin-right: 50px; display: none;">
+                        Журнал сообщений о ходе синхронизации
+                    </div>
+                    <div id="main-application">
+                        <div class="toolbar-region">
+                            <div class="grid-toolbar">
+                                <div id="sync-button" title="Синхронизировать с 4stor.ru" class="tbar-button button-sync toolbar-for-disabled">
+                                    <span class="image sync"></span>
+                                    <span class="text">Синхронизировать</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="settings-links">
-                        <div class="settings-table-container">
-                            <table class="settings-sync-table" cellspacing="0" cellpadding="0">
-                                <thead>
-                                    <tr>
-                                        <td class="checkbox-cell">
-                                            <input type="checkbox" class="delete-checkbox all-checkbox" />
-                                        </td>
-                                        <td class="name-cell">Название</td>
-                                        <td class="href-cell">Адрес</td>
-                                        <td class="switch-cell">Вкл.</td>
-                                        <td class="multi-cell">М/с</td>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for link in sync_links %}
-                                    <tr class="grid-row">
-                                        <td class="checkbox-item-cell">
-                                            <input itemId="{{link[0]}}" type="checkbox" class="sync-checkbox" />
-                                        </td>
-                                        <td class="name-item-cell">{{ link[1] }}</td>
-                                        <td class="href-item-cell">
-                                            <a target="_blank" href="{{ link[2] }}">{{ link[2] }}</a>
-                                        </td>
-                                        <td class="switch-item-cell">
-                                            <div title="Ссылка {% if link[3] == 'n' %}не{% endif %} включена" class="radio-class {% if link[3] == 'y' %}yes{% else %}no{% endif %}"></div>
-                                        </td>
-                                        <td class="multi-item-cell">
-                                            <div title="Многостраничность {%- if link[4] == 'n' -%}не{% endif %} включена" class="radio-class  {% if link[4] == 'y' %}yes{% else %}no{% endif %}"></div>
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
+                        <div class="settings-links">
+                            <div class="settings-table-container">
+                                <table class="settings-sync-table" cellspacing="0" cellpadding="0">
+                                    <thead>
+                                        <tr>
+                                            <td class="checkbox-cell">
+                                                <input type="checkbox" class="delete-checkbox all-checkbox" />
+                                            </td>
+                                            <td class="name-cell">Название</td>
+                                            <td class="href-cell">Адрес</td>
+                                            <td class="switch-cell">Вкл.</td>
+                                            <td class="multi-cell">М/с</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for link in sync_links %}
+                                        <tr class="grid-row">
+                                            <td class="checkbox-item-cell">
+                                                <input itemId="{{link[0]}}" type="checkbox" class="sync-checkbox" />
+                                            </td>
+                                            <td class="name-item-cell">{{ link[1] }}</td>
+                                            <td class="href-item-cell">
+                                                <a target="_blank" href="{{ link[2] }}">{{ link[2] }}</a>
+                                            </td>
+                                            <td class="switch-item-cell">
+                                                <div title="Ссылка {% if link[3] == 'n' %}не{% endif %} включена" class="radio-class {% if link[3] == 'y' %}yes{% else %}no{% endif %}"></div>
+                                            </td>
+                                            <td class="multi-item-cell">
+                                                <div title="Многостраничность {%- if link[4] == 'n' -%}не{% endif %} включена" class="radio-class  {% if link[4] == 'y' %}yes{% else %}no{% endif %}"></div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -122,7 +120,6 @@
             window.syncData['{{index}}']['page'] = {{send_object[index]['page']}};
             window.syncData['{{index}}']['state'] = '{{send_object[index]['state']}}';
             {% endfor %}
-            console.log(window.syncData)
         </script>
         <script src="{{ static('js/main.js') }}"></script>
     </body>
