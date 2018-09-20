@@ -5,6 +5,7 @@ import jinja2
 from _core.config import settings
 from _core.controllers.main_controller import MainController
 from _core.controllers.web_socket_controller import WebSocketController
+from _core.controllers.start_sync_controller import StartSyncController
 
 
 async def on_shutdown(app):
@@ -16,6 +17,7 @@ application = web.Application()
 aiohttp_jinja2.setup(application, loader=jinja2.FileSystemLoader('_core/views'))
 
 application.router.add_route('GET', '/', MainController)
+application.router.add_route('GET', '/start_sync', StartSyncController)
 application.router.add_route('GET', '/{id}/ws', WebSocketController)
 
 application['static_root_url'] = '/static'

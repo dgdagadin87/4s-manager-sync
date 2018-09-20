@@ -28,10 +28,12 @@ $(document).ready(function(){
             return;
         }
 
-        sock.send(JSON.stringify({
-            msg_type: 'COMMON_START_SYNC',
-            msg_data: items.join(',')
-        }));
+        $.ajax({
+            url: 'http://127.0.0.1:1234/start_sync',
+            data: {
+                items: items.join(',')
+            }
+        });
     });
 
     sock.onopen = function(){
@@ -40,8 +42,8 @@ $(document).ready(function(){
 
     sock.onmessage = function(event) {
 
-        var data = event.data || '{}';console.log(data);
-        //console.log(JSON.parse(data))
+        var data = event.data || '{}';
+        console.log(data);
     };
 
     sock.onclose = function(event){

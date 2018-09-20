@@ -95,9 +95,6 @@ class ServerSync(object):
 
     async def _synchronize_page(self, page_href):
 
-        import asyncio
-        await asyncio.sleep(1)
-
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.get(page_href) as response:
