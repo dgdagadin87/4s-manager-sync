@@ -190,9 +190,6 @@ class ServerSync(object):
             # Узнать есть ли в БД
             stor_info = await get_stor_info(self._db_cursor, stor)
             # if !stor_info: put_error_in_log
-            '''if stor_info is False:
-                print(stor['id'])
-                continue'''
 
             # Если есть - обновить информацию
             if len(stor_info) > 0:
