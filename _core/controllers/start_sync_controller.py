@@ -7,16 +7,11 @@ from ..include.helpers import object2string
 
 class StartSyncController(web.View):
 
-    def _start_server_sync(self, ids):
+    async def _start_server_sync(self, ids):
 
         application = self.request.app
-
-        async def async_method():
-
-            server_sync = ServerSync(self.send_2_user, self._actualize_data, application, ids)
-            await server_sync.run()
-
-        asyncio.ensure_future(async_method())
+        server_sync = ServerSync(self.send_2_user, self._actualize_data, application, ids)
+        await server_sync.run()
 
     def _actualize_data(self, data):
 
@@ -41,6 +36,6 @@ class StartSyncController(web.View):
         query = self.request.query
         items = query.get('items')
 
-        self._start_server_sync(items)
+        asyncio.ensure_future(self._start_server_sync(items))
 
         return web.Response(body=b'OK')
