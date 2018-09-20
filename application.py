@@ -24,7 +24,7 @@ application['static_root_url'] = '/static'
 application.router.add_static('/static', 'static', name='static')
 
 application.on_cleanup.append(on_shutdown)
-application['websockets'] = {}
+application['websockets'] = []
 
 application['send_object'] = {}
 

@@ -29,9 +29,7 @@ class StartSyncController(web.View):
         web_sockets = application['websockets']
 
         for ws_item in web_sockets:
-
-            current_ws = web_sockets[ws_item]
-            await current_ws.send_str(content)
+            await ws_item.send_str(content)
 
     async def send_2_user(self, data):
 

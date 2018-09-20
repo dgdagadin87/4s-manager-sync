@@ -48,8 +48,6 @@ $(document).ready(function(){
         window.syncData = JSON.parse(data);
 
         renderLog();
-
-        console.log(data);
     };
 
     sock.onclose = function(event){

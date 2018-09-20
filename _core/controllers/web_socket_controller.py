@@ -11,11 +11,11 @@ class WebSocketController(web.View):
         ws = web.WebSocketResponse()
         await ws.prepare(self.request)
 
-        request_params = self.request.rel_url.raw_parts
-        ws_name = request_params[1]
+        #request_params = self.request.rel_url.raw_parts
+        #ws_name = request_params[1]
 
         application = self.request.app
-        application['websockets'][ws_name] = ws
+        application['websockets'].append(ws)
 
         async for message in ws:
 
@@ -42,8 +42,9 @@ class WebSocketController(web.View):
                 print('ws connection closed with exception %s' % ws.exception())
 
         for ws_item in application['websockets']:
-            current_ws = application['websockets'][ws_item]
-            await current_ws.send_str('main ws disconected')
+            await ws_item.send_str('main ws disconected')
+
+        application['websockets'].remove(ws)
 
         print('web-socket connection closed')
 
