@@ -82,7 +82,7 @@ class ServerSync(object):
         i = 1
 
         if is_link_multipage:
-            for i in range(1, 10):
+            for i in range(1, 10000):
                 page_href = link[2] + 'page/' + str(i) + '/'
                 sync_page_result = await self._synchronize_page(page_href)
                 await self._send_2_user(settings.WS_PAGE_SYNCHED, link_name, i)
